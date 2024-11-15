@@ -1,0 +1,17 @@
+{
+  "domain": "x1200_custom",
+  "name": "X1200 Custom",
+  "version": "0.0.1-alpha1",
+  "codeowners": ["@nsandstrom"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/nsandstrom/x1200-ha/blob/main/README.md",
+  "homekit": {},
+  "iot_class": "local_polling",
+  "requirements": [
+    "i2csense==0.0.4",
+    "smbus-cffi==0.5.1"
+  ],
+  "ssdp": [],
+  "zeroconf": []
+}
