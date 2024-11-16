@@ -1,8 +1,14 @@
 """Generic UPS hat module."""
 
+from datetime import datetime
+import logging
 import struct
 
+import gpiod
+from gpiod.line import Direction, Value
 from smbus import SMBus
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class BaseUpsHat:
@@ -43,6 +49,27 @@ class X1200(BaseUpsHat):
         swapped = struct.unpack("<H", struct.pack(">H", read))[0]
         return swapped * 1.25 / 1000 / 16
 
+    def _read_pld(self):
+        PLD_PIN = 6
+
+        with gpiod.request_lines(
+            "/dev/gpiochip4",
+            consumer="x1200",
+            config={
+                PLD_PIN: gpiod.LineSettings(
+                    direction=Direction.INPUT,
+                )
+            },
+        ) as request:
+            pld_state = request.get_value(PLD_PIN)
+            _LOGGER.warn(f"pld_state: {pld_state} at {datetime.now()}")
+
+            if pld_state == Value.ACTIVE:
+                return True
+            if pld_state == Value.INACTIVE:
+                return False
+        return None
+
     @property
     def battery_level(self) -> int:
         """Battery level as a percentage."""
@@ -57,4 +84,4 @@ class X1200(BaseUpsHat):
 
 
 class UnexpectedConnectivityResult(Exception):
-    """Connectivity test returned something we did not exect."""
+    """Connectivity test returned something we did not expect."""
