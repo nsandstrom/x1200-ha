@@ -1,7 +1,7 @@
 {
   "domain": "x1200_ups",
   "name": "X1200 Custom",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "codeowners": ["@nsandstrom"],
   "config_flow": true,
   "dependencies": [],
