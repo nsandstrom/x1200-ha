@@ -1,6 +1,6 @@
 {
   "domain": "x1200_ups",
-  "name": "X1200 Custom",
+  "name": "X1200 UPS",
   "version": "0.0.2",
   "codeowners": ["@nsandstrom"],
   "config_flow": true,
