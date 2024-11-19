@@ -1,7 +1,7 @@
 {
   "domain": "x1200_ups",
   "name": "X1200 UPS",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "codeowners": ["@nsandstrom"],
   "config_flow": true,
   "dependencies": [],
