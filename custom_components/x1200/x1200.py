@@ -1,18 +1,14 @@
 """Generic UPS hat module."""
 
-from datetime import datetime
-import logging
 import struct
 
 import gpiod
 from gpiod.line import Direction, Value
 from smbus import SMBus
 
-_LOGGER = logging.getLogger(__name__)
 
-
-class BaseUpsHat:
-    """Base for UPS hats."""
+class BaseUps:
+    """Base for UPS class."""
 
     def __init__(
         self, i2c_bus: int, i2c_address: int, gpoi_chip: int, pld_pin: int
@@ -40,8 +36,25 @@ class BaseUpsHat:
             return True
         raise UnexpectedConnectivityResult(f"Battery level {level} was not expected")
 
+    @property
+    def battery_level(self) -> int:
+        """Battery level as a percentage."""
+        level = self._read_level()
+        return round(level, 2)
 
-class X1200(BaseUpsHat):
+    @property
+    def battery_voltage(self) -> float:
+        """Battery voltage."""
+        voltage = self._read_voltage()
+        return round(voltage, 2)
+
+    @property
+    def external_power_detected(self) -> bool:
+        """External power is connected."""
+        return self._read_pld()
+
+
+class X1200(BaseUps):
     """X1200 UPS hat."""
 
     def __init__(
@@ -78,7 +91,6 @@ class X1200(BaseUpsHat):
             },
         ) as request:
             pld_state = request.get_value(PLD_PIN)
-            _LOGGER.warning(f"pld_state: {pld_state} at {datetime.now()}")
 
             if pld_state == Value.ACTIVE:
                 result = True
@@ -87,22 +99,6 @@ class X1200(BaseUpsHat):
 
         return result
 
-    @property
-    def battery_level(self) -> int:
-        """Battery level as a percentage."""
-        level = self._read_level()
-        return round(level, 2)
-
-    @property
-    def battery_voltage(self) -> float:
-        """Battery voltage."""
-        voltage = self._read_voltage()
-        return round(voltage, 2)
-
-    @property
-    def external_power_detected(self) -> bool:
-        """Battery voltage."""
-        return self._read_pld()
 
 class UnexpectedConnectivityResult(Exception):
     """Connectivity test returned something we did not expect."""

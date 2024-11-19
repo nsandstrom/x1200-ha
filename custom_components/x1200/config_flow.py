@@ -1,4 +1,4 @@
-"""Config flow for nsalab-test integration."""
+"""Config flow for integration."""
 
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ from .hub import Hub
 
 _LOGGER = logging.getLogger(__name__)
 
-# TODO adjust the data schema to the data that you need
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Optional("i2c_bus", default=1): int,
@@ -28,10 +27,8 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
-    """Validate the user input allows us to connect.
+    """Validate the user input allows us to connect."""
 
-    Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
-    """
     if not data["i2c_address"].startswith("0x"):
         raise AddressIsNotHex from None
 
@@ -49,13 +46,11 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     except Exception as error:
         raise I2cCannotConnect from error
 
-    # Return info that you want to store in the config entry.
-    print("🍌 First in conf chain", data)
-    return {"title": "TODO Change Title"}
+    return {"title": "X1200 UPS"}
 
 
 class ConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for nsalab-test."""
+    """Handle a config flow."""
 
     VERSION = 1
 
@@ -94,7 +89,6 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
 def make_test_connection(bus: int, address: int):
     """Test connectivity using values from config flow."""
     connect_status = Hub.test_connection(bus, address)
-    print("🍌 Connect status", connect_status)
     if not connect_status:
         raise UnexpectedConnectivityResult from None
 

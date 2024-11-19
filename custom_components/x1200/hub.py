@@ -1,11 +1,7 @@
-"""A demonstration 'hub' that connects several devices."""
+"""A simple abstraction hub."""
 
 from __future__ import annotations
 
-# In a real implementation, this would be in an external library that's on PyPI.
-# The PyPI package needs to be included in the `requirements` section of manifest.json
-# See https://developers.home-assistant.io/docs/creating_integration_manifest
-# for more information.
 from datetime import timedelta
 
 from homeassistant.core import HomeAssistant
@@ -17,7 +13,7 @@ SCAN_INTERVAL = timedelta(seconds=POLL_TIME)
 
 
 class Hub:
-    """Dummy hub for Hello World example."""
+    """Abstraction hub."""
 
     manufacturer = "Geekworm"
 
@@ -29,8 +25,7 @@ class Hub:
         gpoi_chip: int,
         pld_pin: int,
     ) -> None:
-        """Init dummy hub."""
-        # self._host = host
+        """Init hub."""
         self._hass = hass
         self.name = "X1200 UPS"
         self._id = DOMAIN
@@ -43,12 +38,12 @@ class Hub:
 
     @property
     def hub_id(self) -> str:
-        """ID for dummy hub."""
+        """ID for hub."""
         return self._id
 
     @staticmethod
     def test_connection(i2c_bus: int, i2c_address: int) -> bool:
-        """Test connectivity to the Dummy hub is OK."""
+        """Test connectivity to the UPS module."""
         return X1200.test_connection(i2c_bus, i2c_address)
 
     @property

@@ -1,4 +1,4 @@
-"""The nsalab-test integration."""
+"""Geekworm X1200 UPS integration."""
 
 from __future__ import annotations
 
@@ -14,14 +14,7 @@ type HubConfigEntry = ConfigEntry[Hub]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: HubConfigEntry) -> bool:
-    """Set up nsalab-test from a config entry."""
-
-    # TODO 1. Create API instance
-    # TODO 2. Validate the API connection (and authentication)
-    # TODO 3. Store an API object for your platforms to access
-    # entry.runtime_data = MyAPI(...)
-
-    print("🍅 Is this config entry?", entry.data)
+    """Set up integration from a config entry."""
 
     integer_address = int(entry.data["i2c_address"], 16)
 
@@ -38,7 +31,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: HubConfigEntry) -> bool:
     return True
 
 
-# TODO Update entry annotation
 async def async_unload_entry(hass: HomeAssistant, entry: HubConfigEntry) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
