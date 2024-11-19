@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant
 
 from .hub import Hub
 
-PLATFORMS: list[Platform] = [Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR]
 
 type HubConfigEntry = ConfigEntry[Hub]
 
