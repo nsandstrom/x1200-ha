@@ -6,20 +6,13 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from . import hub
+from .hub import Hub
 
-# TODO List the platforms that you want to support.
-# For your initial PR, limit it to 1 platform.
-PLATFORMS: list[Platform] = [Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR]
 
-# TODO Create ConfigEntry type alias with API object
-# TODO Rename type alias and update all entry annotations
-
-type HubConfigEntry = ConfigEntry[hub.Hub]
-# type New_NameConfigEntry = ConfigEntry[MyApi]  # noqa: F821
+type HubConfigEntry = ConfigEntry[Hub]
 
 
-# TODO Update entry annotation
 async def async_setup_entry(hass: HomeAssistant, entry: HubConfigEntry) -> bool:
     """Set up nsalab-test from a config entry."""
 
@@ -30,9 +23,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: HubConfigEntry) -> bool:
 
     print("🍅 Is this config entry?", entry.data)
 
-    integer_address = int(entry.data["address"], 16)
+    integer_address = int(entry.data["i2c_address"], 16)
 
-    entry.runtime_data = hub.Hub(hass, entry.data["bus"], integer_address)
+    entry.runtime_data = Hub(
+        hass,
+        entry.data["i2c_bus"],
+        integer_address,
+        entry.data["gpoi_chip"],
+        entry.data["pld_pin"],
+    )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 

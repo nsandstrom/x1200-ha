@@ -7,7 +7,6 @@ from __future__ import annotations
 # See https://developers.home-assistant.io/docs/creating_integration_manifest
 # for more information.
 from datetime import timedelta
-import random
 
 from homeassistant.core import HomeAssistant
 
@@ -22,16 +21,23 @@ class Hub:
 
     manufacturer = "Geekworm"
 
-    def __init__(self, hass: HomeAssistant, bus: int, address: int) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        i2c_bus: int,
+        i2c_address: int,
+        gpoi_chip: int,
+        pld_pin: int,
+    ) -> None:
         """Init dummy hub."""
         # self._host = host
         self._hass = hass
-        self.name = "UPS HAT"
+        self.name = "X1200 UPS"
         self._id = DOMAIN
 
         self.model = "X1200 UPS Shield"
 
-        self.x1200 = X1200(bus, address)
+        self.x1200 = X1200(i2c_bus, i2c_address, gpoi_chip, pld_pin)
 
         self.online = True
 
@@ -52,10 +58,10 @@ class Hub:
 
     @property
     def battery_voltage(self) -> float:
-        """Return a random voltage roughly that of a 12v battery."""
+        """Battery voltage."""
         return self.x1200.battery_voltage
 
     @property
-    def illuminance(self) -> int:
-        """Return a sample illuminance in lux."""
-        return random.randint(0, 500)
+    def external_power_connected(self) -> bool:
+        """If external power is pluged in."""
+        return self.x1200.external_power_detected
