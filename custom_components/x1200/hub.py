@@ -30,7 +30,7 @@ class Hub:
         self.name = "X1200 UPS"
         self._id = DOMAIN
 
-        self.model = "X1200 UPS Shield"
+        self.model = "X1200 2-Cell 18650 UPS Shield"
 
         self.x1200 = X1200(i2c_bus, i2c_address, gpoi_chip, pld_pin)
 
