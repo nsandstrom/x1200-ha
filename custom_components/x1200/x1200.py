@@ -14,17 +14,27 @@ _LOGGER = logging.getLogger(__name__)
 class BaseUpsHat:
     """Base for UPS hats."""
 
-    def __init__(self, i2c_bus: int, i2c_address: int) -> None:
+    def __init__(
+        self, i2c_bus: int, i2c_address: int, gpoi_chip: int, pld_pin: int
+    ) -> None:
         """Initialize the sensor."""
         self._i2c_address = i2c_address
+        self._gpio_path = f"/dev/gpiochip{gpoi_chip}"
+        self._pld_pin = pld_pin
 
-    def _read_level(self) -> int:
+    def _read_level(self) -> float:
+        pass
+
+    def _read_voltage(self) -> float:
+        pass
+
+    def _read_pld(self) -> bool:
         pass
 
     @classmethod
     def test_connection(cls, i2c_bus: int, i2c_address: int) -> bool:
         """Test if we can connect on the i2c bus."""
-        x12 = cls(i2c_bus, i2c_address)
+        x12 = cls(i2c_bus, i2c_address, 0, 0)
         level = x12.battery_level
         if level >= 0 and level < 200:
             return True
@@ -32,28 +42,34 @@ class BaseUpsHat:
 
 
 class X1200(BaseUpsHat):
-    """The real UPS hat."""
+    """X1200 UPS hat."""
 
-    def __init__(self, i2c_bus: int, i2c_address: int) -> None:
-        """Initialize the sensor."""
-        super().__init__(i2c_bus, i2c_address)
+    def __init__(
+        self, i2c_bus: int, i2c_address: int, gpoi_chip: int, pld_pin: int
+    ) -> None:
+        """Initialize the sensors."""
+        super().__init__(i2c_bus, i2c_address, gpoi_chip, pld_pin)
         self._i2c = SMBus(i2c_bus)
 
     def _read_level(self):
         read = self._i2c.read_word_data(self._i2c_address, 4)
+
         swapped = struct.unpack("<H", struct.pack(">H", read))[0]
         return swapped / 256
 
     def _read_voltage(self):
         read = self._i2c.read_word_data(self._i2c_address, 2)
+
         swapped = struct.unpack("<H", struct.pack(">H", read))[0]
         return swapped * 1.25 / 1000 / 16
 
     def _read_pld(self):
-        PLD_PIN = 6
+        PLD_PIN = self._pld_pin
+
+        result = None
 
         with gpiod.request_lines(
-            "/dev/gpiochip4",
+            self._gpio_path,
             consumer="x1200",
             config={
                 PLD_PIN: gpiod.LineSettings(
@@ -62,13 +78,14 @@ class X1200(BaseUpsHat):
             },
         ) as request:
             pld_state = request.get_value(PLD_PIN)
-            _LOGGER.warn(f"pld_state: {pld_state} at {datetime.now()}")
+            _LOGGER.warning(f"pld_state: {pld_state} at {datetime.now()}")
 
             if pld_state == Value.ACTIVE:
-                return True
-            if pld_state == Value.INACTIVE:
-                return False
-        return None
+                result = True
+            elif pld_state == Value.INACTIVE:
+                result = False
+
+        return result
 
     @property
     def battery_level(self) -> int:
@@ -82,6 +99,10 @@ class X1200(BaseUpsHat):
         voltage = self._read_voltage()
         return round(voltage, 2)
 
+    @property
+    def external_power_detected(self) -> bool:
+        """Battery voltage."""
+        return self._read_pld()
 
 class UnexpectedConnectivityResult(Exception):
     """Connectivity test returned something we did not expect."""
