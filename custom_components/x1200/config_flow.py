@@ -11,7 +11,7 @@ from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import DOMAIN
+from .const import DOMAIN, NAME
 from .hub import Hub
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     except Exception as error:
         raise I2cCannotConnect from error
 
-    return {"title": "X1200 UPS"}
+    return {"title": NAME}
 
 
 class ConfigFlow(ConfigFlow, domain=DOMAIN):
