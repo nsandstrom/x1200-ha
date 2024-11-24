@@ -5,7 +5,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import HubConfigEntry
-from .sensor import SensorBase
+from .entity import DeviceBase
 
 
 async def async_setup_entry(
@@ -23,8 +23,8 @@ async def async_setup_entry(
         async_add_entities(new_devices)
 
 
-class PldSensor(SensorBase):
     """External Power Sensor."""
+class PldSensor(DeviceBase):
 
     device_class = BinarySensorDeviceClass.PLUG
 
