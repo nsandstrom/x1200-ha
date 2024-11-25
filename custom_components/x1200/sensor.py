@@ -35,8 +35,8 @@ class BatterySensor(DeviceBase):
         """Initialize the sensor."""
         super().__init__(hub)
 
-        self._attr_unique_id = f"{self._hub.hub_id}_battery_capacity"
-        self._attr_name = f"{self._hub.name} Battery Capacity"
+        self._attr_unique_id = f"{self._hub.hub_id}_battery_level"
+        self._attr_name = f"{self._hub.name} Battery Level"
         self._state = self._hub.battery_level
 
     @property
