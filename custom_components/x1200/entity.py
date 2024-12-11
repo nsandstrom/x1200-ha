@@ -1,3 +1,5 @@
+"""Shared base class for all entitys."""
+
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
 from .const import DOMAIN

@@ -7,7 +7,8 @@
           "pld_pin": "PLD gpio pin (charger detection)",
           "i2c_bus": "I²C bus",
           "i2c_address": "I²C address",
-          "gpoi_chip": "GPIO Chip.\n(0 when kernel release 6.6.45 or newer is used)"
+          "gpoi_chip": "GPIO Chip.\n(0 when kernel release 6.6.45 or newer is used)",
+          "battery_protection_pin": "Charge disable gpio pin"
         }
       }
     },

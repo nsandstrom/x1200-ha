@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant
 
 from .hub import Hub
 
-PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
 
 type HubConfigEntry = ConfigEntry[Hub]
 
@@ -24,6 +24,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HubConfigEntry) -> bool:
         integer_address,
         entry.data["gpoi_chip"],
         entry.data["pld_pin"],
+        entry.data["battery_protection_pin"],
     )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
