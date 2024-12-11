@@ -42,8 +42,6 @@ class Hub:
         self._battery_protection = None
         self._battery_level = None
         self._battery_voltage = None
-        self._battery_percentage = None
-        self._battery_charging = None
         self._external_power_connected = None
         self._battery_charge_enabled = True
 
