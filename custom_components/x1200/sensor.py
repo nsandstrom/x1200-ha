@@ -3,11 +3,10 @@
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import HubConfigEntry
-from .const import DOMAIN
+from .entity import DeviceBase
 
 
 async def async_setup_entry(
@@ -26,32 +25,7 @@ async def async_setup_entry(
         async_add_entities(new_devices)
 
 
-class SensorBase(Entity):
-    """Base representation of a Hello World Sensor."""
-
-    def __init__(self, hub) -> None:
-        """Initialize the sensor."""
-        self._hub = hub
-
-        self.model = "Test Device"
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Return information to link this entity with the correct device."""
-        return {
-            "identifiers": {(DOMAIN, self._hub.hub_id)},
-            "name": self._hub.name,
-            "model": self._hub.model,
-            "manufacturer": self._hub.manufacturer,
-        }
-
-    @property
-    def available(self) -> bool:
-        """Return True if ups is online."""
-        return self._hub.online
-
-
-class BatterySensor(SensorBase):
+class BatterySensor(DeviceBase):
     """Representation of a Battery Sensor."""
 
     device_class = SensorDeviceClass.BATTERY
@@ -61,8 +35,8 @@ class BatterySensor(SensorBase):
         """Initialize the sensor."""
         super().__init__(hub)
 
-        self._attr_unique_id = f"{self._hub.hub_id}_battery_capacity"
-        self._attr_name = f"{self._hub.name} Battery Capacity"
+        self._attr_unique_id = f"{self._hub.hub_id}_battery_level"
+        self._attr_name = f"{self._hub.name} Battery Level"
         self._state = self._hub.battery_level
 
     @property
@@ -71,7 +45,7 @@ class BatterySensor(SensorBase):
         return self._hub.battery_level
 
 
-class VoltageSensor(SensorBase):
+class VoltageSensor(DeviceBase):
     """Representation of a Voltage Sensor."""
 
     device_class = SensorDeviceClass.VOLTAGE

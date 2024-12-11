@@ -29,6 +29,14 @@ class X1200(BaseUps):
             self._local_pld_state = not self._local_pld_state
         return self._local_pld_state
 
+    def disable_battery_charge(self, value) -> None:
+        """Blocks battery charging."""
+        PIN = 16
+
+        target_value = "High" if (value) else "Low"
+
+        print(f"Set gpio {PIN} to {target_value}")
+
 
 class MockedSMbusError(ConnectionError):
     """Error to indicate we cannot connect."""

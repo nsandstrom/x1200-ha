@@ -11,12 +11,18 @@ class BaseUps:
     """Base for UPS class."""
 
     def __init__(
-        self, i2c_bus: int, i2c_address: int, gpoi_chip: int, pld_pin: int
+        self,
+        i2c_bus: int,
+        i2c_address: int,
+        gpoi_chip: int,
+        pld_pin: int,
+        battery_protection_pin: int,
     ) -> None:
         """Initialize the sensor."""
         self._i2c_address = i2c_address
         self._gpio_path = f"/dev/gpiochip{gpoi_chip}"
         self._pld_pin = pld_pin
+        self._battery_protection_pin = battery_protection_pin
 
     def _read_level(self) -> float:
         pass
@@ -27,10 +33,13 @@ class BaseUps:
     def _read_pld(self) -> bool:
         pass
 
+    def disable_battery_charge(self) -> None:
+        """Blocks battery charging."""
+
     @classmethod
     def test_connection(cls, i2c_bus: int, i2c_address: int) -> bool:
         """Test if we can connect on the i2c bus."""
-        x12 = cls(i2c_bus, i2c_address, 0, 0)
+        x12 = cls(i2c_bus, i2c_address, 0, 0, 0)
         level = x12.battery_level
         if level >= 0 and level < 200:
             return True
@@ -58,10 +67,17 @@ class X1200(BaseUps):
     """X1200 UPS hat."""
 
     def __init__(
-        self, i2c_bus: int, i2c_address: int, gpoi_chip: int, pld_pin: int
+        self,
+        i2c_bus: int,
+        i2c_address: int,
+        gpoi_chip: int,
+        pld_pin: int,
+        battery_protection_pin: int,
     ) -> None:
         """Initialize the sensors."""
-        super().__init__(i2c_bus, i2c_address, gpoi_chip, pld_pin)
+        super().__init__(
+            i2c_bus, i2c_address, gpoi_chip, pld_pin, battery_protection_pin
+        )
         self._i2c = SMBus(i2c_bus)
 
     def _read_level(self):
@@ -98,6 +114,23 @@ class X1200(BaseUps):
                 result = False
 
         return result
+
+    def disable_battery_charge(self, value) -> None:
+        """Blocks battery charging."""
+        PIN = self._battery_protection_pin
+
+        target_value = Value.ACTIVE if (value) else Value.INACTIVE
+
+        with gpiod.request_lines(
+            self._gpio_path,
+            consumer="x1200",
+            config={
+                PIN: gpiod.LineSettings(
+                    direction=Direction.OUTPUT,
+                )
+            },
+        ) as request:
+            request.set_value(PIN, target_value)
 
 
 class UnexpectedConnectivityResult(Exception):
