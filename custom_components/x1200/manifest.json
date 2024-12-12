@@ -1,7 +1,7 @@
 {
   "domain": "x1200_ups",
   "name": "Geekworm X1200 UPS",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "codeowners": ["@nsandstrom"],
   "config_flow": true,
   "dependencies": [],
