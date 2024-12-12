@@ -11,7 +11,7 @@
             "user": {
                 "data": {
                     "battery_protection_pin": "Charge disable gpio pin",
-                    "gpoi_chip": "GPIO Chip.\n(0 when kernel release 6.6.45 or newer is used)",
+                    "gpoi_chip": "GPIO Chip.\n(4 before HAOS 14)",
                     "i2c_address": "I\u00b2C address",
                     "i2c_bus": "I\u00b2C bus",
                     "pld_pin": "PLD gpio pin (charger detection)"

@@ -20,7 +20,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Optional("i2c_bus", default=1): int,
         vol.Optional("i2c_address", default="0x36"): str,
-        vol.Optional("gpoi_chip", default=4): vol.In([0, 4]),
+        vol.Optional("gpoi_chip", default=0): vol.In([0, 4]),
         vol.Optional("pld_pin", default=6): int,
         vol.Optional("battery_protection_pin", default=16): int,
     }
